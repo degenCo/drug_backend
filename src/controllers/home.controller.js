@@ -1,4 +1,5 @@
 import Drug from '../models/Drug.js';
+import mysql from 'mysql2/promise'
 export const getData = async (req, res) => {
     const params = req.query;
       
@@ -28,37 +29,38 @@ export const getData = async (req, res) => {
     });
 }
 
-// export const exportData = async (req, res) => {
-//     try {
-//         // Connect to the database using promises
-//         const connection = await mysql.createConnection({
-//             host: 'localhost',
-//             user: 'root',
-//             password: 'password',
-//             database: 'scraping'
-//         });
+export const exportData = async (req, res) => {
+    return;
+    try {
+        // Connect to the database using promises
+        const connection = await mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: 'password',
+            database: 'scraping'
+        });
 
-//         console.log('Connected to MySQL Database!');
+        console.log('Connected to MySQL Database!');
 
-//         // Execute a query using promise
-//         const [rows, fields] = await connection.execute('SELECT * FROM products');
-//         // console.log('Query Result:', rows);
-//         const data = [];
-//         rows.map((item) => {
-//             data.push({
-//                 category_name: item['category_name'],
-//                 name: item['name'],
-//                 information: JSON.parse(item['information']),
-//                 link: item['link']
-//             })
-//         })
-//         // console.log(data[0]['information']);
+        // Execute a query using promise
+        const [rows, fields] = await connection.execute('SELECT * FROM products');
+        // console.log('Query Result:', rows);
+        const data = [];
+        rows.map((item) => {
+            data.push({
+                category_name: item['category_name'],
+                name: item['name'],
+                information: JSON.parse(item['information']),
+                link: item['link']
+            })
+        })
+        console.log(data[0]['information']);
         
-//         Drug.insertMany(data);
-//         console.log("-----------__ENd------------")
-//         // Close the connection
-//         await connection.end();
-//     } catch (err) {
-//         console.error('Error:', err);
-//     }
-// }
+        await Drug.insertMany(data);
+        console.log("-----------__ENd------------")
+        // Close the connection
+        await connection.end();
+    } catch (err) {
+        console.error('Error:', err);
+    }
+}
